@@ -1,12 +1,12 @@
 "use client"
 
-import { Ticket, Printer, RotateCcw, Clock, Hash, User, CreditCard, FileText } from "lucide-react"
+import { Ticket, Printer, RotateCcw, Clock, Hash, CreditCard, BookOpen, FileText } from "lucide-react"
 import { Button } from "@/components/ui/button"
 
 export interface TokenData {
   tokenNumber: string
-  applicantName: string
-  cnic: string
+  docType: "cnic" | "passport"
+  docNumber: string
   serviceType: string
   counter: string
   issuedAt: string
@@ -20,6 +20,9 @@ interface TokenCardProps {
 }
 
 export function TokenCard({ token, onPrint, onNewToken }: TokenCardProps) {
+  const DocIcon = token.docType === "cnic" ? CreditCard : BookOpen
+  const docLabel = token.docType === "cnic" ? "CNIC" : "Passport"
+
   return (
     <div className="rounded-xl border-2 border-primary/20 bg-card p-6 shadow-sm">
       {/* Token Header */}
@@ -37,18 +40,10 @@ export function TokenCard({ token, onPrint, onNewToken }: TokenCardProps) {
       <div className="mb-5 flex flex-col gap-3">
         <div className="flex items-center justify-between rounded-lg bg-secondary/50 px-4 py-3">
           <div className="flex items-center gap-2">
-            <User className="h-4 w-4 text-muted-foreground" />
-            <span className="text-sm text-muted-foreground">Applicant</span>
+            <DocIcon className="h-4 w-4 text-muted-foreground" />
+            <span className="text-sm text-muted-foreground">{docLabel}</span>
           </div>
-          <span className="text-sm font-semibold text-foreground">{token.applicantName}</span>
-        </div>
-
-        <div className="flex items-center justify-between rounded-lg bg-secondary/50 px-4 py-3">
-          <div className="flex items-center gap-2">
-            <CreditCard className="h-4 w-4 text-muted-foreground" />
-            <span className="text-sm text-muted-foreground">CNIC</span>
-          </div>
-          <span className="text-sm font-semibold text-foreground font-mono">{token.cnic}</span>
+          <span className="text-sm font-semibold text-foreground font-mono">{token.docNumber}</span>
         </div>
 
         <div className="flex items-center justify-between rounded-lg bg-secondary/50 px-4 py-3">
@@ -75,6 +70,9 @@ export function TokenCard({ token, onPrint, onNewToken }: TokenCardProps) {
           <span className="text-sm font-semibold text-foreground">{token.issuedAt}</span>
         </div>
       </div>
+
+      {/* Date */}
+      <p className="mb-5 text-center text-xs text-muted-foreground">{token.date}</p>
 
       {/* Actions */}
       <div className="flex flex-col gap-3 sm:flex-row">
