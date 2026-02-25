@@ -2,7 +2,7 @@
 
 import { useState } from "react"
 import { useRouter } from "next/navigation"
-import { Eye, EyeOff, LogIn } from "lucide-react"
+import { Eye, EyeOff, LogIn, AlertCircle } from "lucide-react"
 import { Button } from "@/components/ui/button"
 import { Input } from "@/components/ui/input"
 import { Label } from "@/components/ui/label"
@@ -11,22 +11,60 @@ export function LoginForm() {
   const [showPassword, setShowPassword] = useState(false)
   const [isLoading, setIsLoading] = useState(false)
   const [username, setUsername] = useState("")
+  const [password, setPassword] = useState("")
+  const [error, setError] = useState("")
   const router = useRouter()
 
-  const handleSubmit = (e: React.FormEvent) => {
+  const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault()
     setIsLoading(true)
-    // Simulate login, then redirect to session page
-    setTimeout(() => {
-      // Store user info in sessionStorage for the session page
-      sessionStorage.setItem("dls_user", username || "Officer")
+    setError("")
+
+    try {
+      const res = await fetch("/api/auth/login", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ username, password }),
+      })
+
+      const data = await res.json()
+
+      if (!res.ok) {
+        setError(data.error || "Login failed")
+        setIsLoading(false)
+        return
+      }
+
+      // Store user + branch info in sessionStorage
+      sessionStorage.setItem("dls_user", data.user.fullName)
+      sessionStorage.setItem("dls_user_id", String(data.user.userId))
+      sessionStorage.setItem("dls_username", data.user.username)
+      sessionStorage.setItem("dls_role", data.user.role)
       sessionStorage.setItem("dls_authenticated", "true")
+      // Branch info
+      sessionStorage.setItem("dls_branch_id", String(data.branch.branchId))
+      sessionStorage.setItem("dls_branch_name", data.branch.branchName)
+      sessionStorage.setItem("dls_branch_code", data.branch.branchCode)
+      sessionStorage.setItem("dls_branch_address", data.branch.address || "")
+      sessionStorage.setItem("dls_branch_phone", data.branch.phone || "")
+      sessionStorage.setItem("dls_branch_timings", data.branch.timings || "")
+
       router.push("/session")
-    }, 1500)
+    } catch {
+      setError("Cannot connect to server. Check your SQL Server is running.")
+      setIsLoading(false)
+    }
   }
 
   return (
     <form onSubmit={handleSubmit} className="flex flex-col gap-5">
+      {error && (
+        <div className="flex items-center gap-2 rounded-lg border border-destructive/30 bg-destructive/5 px-4 py-3 text-sm text-destructive">
+          <AlertCircle className="h-4 w-4 shrink-0" />
+          <p>{error}</p>
+        </div>
+      )}
+
       <div className="flex flex-col gap-2">
         <Label htmlFor="username" className="text-sm font-medium text-foreground">
           Username / CNIC
@@ -51,6 +89,8 @@ export function LoginForm() {
             id="password"
             type={showPassword ? "text" : "password"}
             placeholder="Enter your password"
+            value={password}
+            onChange={(e) => setPassword(e.target.value)}
             required
             className="h-11 rounded-lg border-border bg-secondary/50 px-4 pr-11 text-foreground placeholder:text-muted-foreground focus:border-primary focus:ring-primary"
           />

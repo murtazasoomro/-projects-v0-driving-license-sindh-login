@@ -16,7 +16,14 @@ export default function SessionPage() {
   const [startTimestamp, setStartTimestamp] = useState<number | null>(null)
   const [isAuthenticated, setIsAuthenticated] = useState(false)
 
-  // Check authentication
+  // Branch info from login
+  const [branchName, setBranchName] = useState("")
+  const [branchCode, setBranchCode] = useState("")
+  const [branchAddress, setBranchAddress] = useState("")
+  const [branchPhone, setBranchPhone] = useState("")
+  const [branchTimings, setBranchTimings] = useState("")
+
+  // Check authentication and load branch info
   useEffect(() => {
     const auth = sessionStorage.getItem("dls_authenticated")
     const user = sessionStorage.getItem("dls_user")
@@ -25,6 +32,11 @@ export default function SessionPage() {
       return
     }
     setUsername(user || "Officer")
+    setBranchName(sessionStorage.getItem("dls_branch_name") || "DLS Branch Office")
+    setBranchCode(sessionStorage.getItem("dls_branch_code") || "---")
+    setBranchAddress(sessionStorage.getItem("dls_branch_address") || "---")
+    setBranchPhone(sessionStorage.getItem("dls_branch_phone") || "---")
+    setBranchTimings(sessionStorage.getItem("dls_branch_timings") || "---")
     setIsAuthenticated(true)
   }, [router])
 
@@ -43,34 +55,79 @@ export default function SessionPage() {
     return () => clearInterval(interval)
   }, [isSessionActive, startTimestamp])
 
-  const handleStartSession = useCallback(() => {
-    const now = new Date()
-    const timeStr = now.toLocaleTimeString("en-US", {
-      hour: "2-digit",
-      minute: "2-digit",
-      second: "2-digit",
-      hour12: true,
-    })
-    setSessionStartTime(timeStr)
-    setStartTimestamp(Date.now())
-    setIsSessionActive(true)
-    setSessionDuration("00:00:00")
-    // Store session info and navigate to token issuance
-    sessionStorage.setItem("dls_session_active", "true")
-    sessionStorage.setItem("dls_session_start", timeStr)
-    sessionStorage.setItem("dls_session_start_ts", String(Date.now()))
-    sessionStorage.setItem("dls_branch_name", "DLS Branch Office - Clifton")
-    router.push("/token-issuance")
+  const handleStartSession = useCallback(async () => {
+    const userId = sessionStorage.getItem("dls_user_id")
+    const branchId = sessionStorage.getItem("dls_branch_id")
+
+    try {
+      const res = await fetch("/api/sessions", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({
+          userId: parseInt(userId || "0"),
+          branchId: parseInt(branchId || "0"),
+        }),
+      })
+
+      const data = await res.json()
+
+      if (data.success) {
+        const now = new Date()
+        const timeStr = now.toLocaleTimeString("en-US", {
+          hour: "2-digit",
+          minute: "2-digit",
+          second: "2-digit",
+          hour12: true,
+        })
+        setSessionStartTime(timeStr)
+        setStartTimestamp(Date.now())
+        setIsSessionActive(true)
+        setSessionDuration("00:00:00")
+
+        // Store session info
+        sessionStorage.setItem("dls_session_active", "true")
+        sessionStorage.setItem("dls_session_id", String(data.session.sessionId))
+        sessionStorage.setItem("dls_session_start", timeStr)
+        sessionStorage.setItem("dls_session_start_ts", String(Date.now()))
+
+        router.push("/token-issuance")
+      }
+    } catch {
+      // Fallback: still navigate even if API fails (for offline dev)
+      const now = new Date()
+      const timeStr = now.toLocaleTimeString("en-US", {
+        hour: "2-digit",
+        minute: "2-digit",
+        second: "2-digit",
+        hour12: true,
+      })
+      sessionStorage.setItem("dls_session_active", "true")
+      sessionStorage.setItem("dls_session_id", "0")
+      sessionStorage.setItem("dls_session_start", timeStr)
+      sessionStorage.setItem("dls_session_start_ts", String(Date.now()))
+      router.push("/token-issuance")
+    }
   }, [router])
 
-  const handleCloseSession = useCallback(() => {
+  const handleCloseSession = useCallback(async () => {
+    const sessionId = sessionStorage.getItem("dls_session_id")
+    try {
+      await fetch("/api/sessions", {
+        method: "PATCH",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ sessionId: parseInt(sessionId || "0") }),
+      })
+    } catch {
+      // Ignore API failure
+    }
     setIsSessionActive(false)
     setStartTimestamp(null)
+    sessionStorage.removeItem("dls_session_active")
+    sessionStorage.removeItem("dls_session_id")
   }, [])
 
   const handleLogout = useCallback(() => {
-    sessionStorage.removeItem("dls_authenticated")
-    sessionStorage.removeItem("dls_user")
+    sessionStorage.clear()
     router.replace("/")
   }, [router])
 
@@ -101,13 +158,13 @@ export default function SessionPage() {
             </p>
           </div>
 
-          {/* Branch info */}
+          {/* Branch info from DB */}
           <BranchInfoCard
-            branchName="DLS Branch Office - Clifton"
-            branchCode="KHI-CLF-001"
-            address="Block 5, Clifton, Karachi, Sindh, Pakistan"
-            phone="+92-21-35874590"
-            timings="Mon - Sat: 9:00 AM - 5:00 PM"
+            branchName={branchName}
+            branchCode={branchCode}
+            address={branchAddress}
+            phone={branchPhone}
+            timings={branchTimings}
           />
 
           {/* Session controls */}
