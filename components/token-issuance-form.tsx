@@ -7,9 +7,9 @@ import { Input } from "@/components/ui/input"
 import { Label } from "@/components/ui/label"
 
 const SERVICES = [
-  { id: "learner", label: "Learner", description: "Learner driving permit" },
-  { id: "permanent", label: "Permanent", description: "Permanent driving license" },
-  { id: "international", label: "International", description: "International driving permit" },
+  { id: "learner", label: "Learner", prefix: "L", description: "Learner driving permit" },
+  { id: "permanent", label: "Permanent", prefix: "P", description: "Permanent driving license" },
+  { id: "international", label: "International", prefix: "I", description: "International driving permit" },
 ]
 
 const TOKEN_TYPES = [
@@ -171,6 +171,15 @@ export function TokenIssuanceForm({ onIssueToken, isIssuing }: TokenIssuanceForm
                   : "border-border bg-secondary/30 hover:border-primary/40 hover:bg-secondary/60"
               }`}
             >
+              <span
+                className={`mb-1 flex h-10 w-10 items-center justify-center rounded-full text-lg font-black ${
+                  selectedService === service.id
+                    ? "bg-primary text-primary-foreground"
+                    : "bg-secondary text-muted-foreground"
+                }`}
+              >
+                {service.prefix}
+              </span>
               <span
                 className={`text-base font-bold ${
                   selectedService === service.id ? "text-primary" : "text-foreground"

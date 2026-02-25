@@ -59,6 +59,7 @@ export default function SessionPage() {
     sessionStorage.setItem("dls_session_active", "true")
     sessionStorage.setItem("dls_session_start", timeStr)
     sessionStorage.setItem("dls_session_start_ts", String(Date.now()))
+    sessionStorage.setItem("dls_branch_name", "DLS Branch Office - Clifton")
     router.push("/token-issuance")
   }, [router])
 

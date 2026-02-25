@@ -15,6 +15,12 @@ const SERVICE_LABELS: Record<string, string> = {
   international: "International",
 }
 
+const SERVICE_PREFIX: Record<string, string> = {
+  learner: "L",
+  permanent: "P",
+  international: "I",
+}
+
 export default function TokenIssuancePage() {
   const router = useRouter()
   const [username, setUsername] = useState("")
@@ -24,6 +30,7 @@ export default function TokenIssuancePage() {
   const [isIssuing, setIsIssuing] = useState(false)
   const [issuedToken, setIssuedToken] = useState<TokenData | null>(null)
   const [tokenCounter, setTokenCounter] = useState(0)
+  const [branchName, setBranchName] = useState("")
 
   // Session timer
   const [sessionStart, setSessionStart] = useState("")
@@ -37,6 +44,7 @@ export default function TokenIssuancePage() {
     const sessionActive = sessionStorage.getItem("dls_session_active")
     const sessionStartTime = sessionStorage.getItem("dls_session_start")
     const sessionStartTs = sessionStorage.getItem("dls_session_start_ts")
+    const branch = sessionStorage.getItem("dls_branch_name")
 
     if (auth !== "true" || sessionActive !== "true") {
       router.replace("/")
@@ -46,6 +54,7 @@ export default function TokenIssuancePage() {
     setUsername(user || "Officer")
     setSessionStart(sessionStartTime || "--:--:--")
     setStartTimestamp(sessionStartTs ? Number(sessionStartTs) : Date.now())
+    setBranchName(branch || "DLS Branch Office")
     setIsAuthenticated(true)
   }, [router])
 
@@ -76,15 +85,18 @@ export default function TokenIssuancePage() {
         const newCount = tokenCounter + 1
         setTokenCounter(newCount)
 
-        const prefix = tokenTypeNumber === 2 ? "FT" : "T"
+        const servicePrefix = SERVICE_PREFIX[serviceId] || "T"
+        const typeIndicator = tokenTypeNumber === 2 ? "F" : ""
         const now = new Date()
         const token: TokenData = {
-          tokenNumber: `${prefix}-${String(newCount).padStart(4, "0")}`,
+          tokenNumber: `${servicePrefix}${typeIndicator}-${String(newCount).padStart(4, "0")}`,
           docType,
           docNumber,
           serviceType: SERVICE_LABELS[serviceId] || serviceId,
+          servicePrefix,
           tokenType,
           tokenTypeNumber,
+          branchName,
           counter: tokenTypeNumber === 2 ? "Counter 01 (Priority)" : "Counter 03",
           issuedAt: now.toLocaleTimeString("en-US", {
             hour: "2-digit",
@@ -102,7 +114,7 @@ export default function TokenIssuancePage() {
         setIsIssuing(false)
       }, 1500)
     },
-    [tokenCounter]
+    [tokenCounter, branchName]
   )
 
   const handlePrint = useCallback(() => {
