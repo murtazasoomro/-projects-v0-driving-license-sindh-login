@@ -37,108 +37,129 @@ export function TokenCard({ token, onPrint, onNewToken }: TokenCardProps) {
 
   return (
     <div className="flex flex-col items-center gap-4">
-      {/* Thermal receipt card - 80mm width */}
+      {/* ===== Thermal Receipt - 72mm printable area ===== */}
       <div
         id="thermal-token"
-        className="thermal-receipt mx-auto w-[302px] bg-card text-card-foreground border border-border shadow-md"
+        style={{ width: "272px" }}
+        className="mx-auto border border-dashed border-foreground/20 bg-card text-card-foreground"
       >
-        {/* Header */}
-        <div className="flex flex-col items-center gap-1 px-4 pt-4 pb-2">
-          <div className="relative h-12 w-12">
-            <Image
-              src="/images/sindh-police-logo.png"
-              alt="Sindh Police Logo"
-              fill
-              className="object-contain"
-              priority
-            />
-          </div>
-          <p className="text-[11px] font-bold uppercase tracking-wide text-foreground">
+        {/* Header - logo + title */}
+        <div style={{ padding: "10px 12px 6px" }} className="flex flex-col items-center">
+          {/* eslint-disable-next-line @next/next/no-img-element */}
+          <img
+            src="/images/sindh-police-logo.png"
+            alt="Sindh Police"
+            width={40}
+            height={40}
+            style={{ width: "40px", height: "40px", objectFit: "contain" }}
+          />
+          <p style={{ fontSize: "10px", marginTop: "4px", fontWeight: 700, letterSpacing: "0.05em", textTransform: "uppercase" }}>
             Driving License Sindh
           </p>
-          <p className="text-[9px] text-muted-foreground">{token.branchName}</p>
+          <p style={{ fontSize: "8px", color: "#666", marginTop: "1px" }}>
+            {token.branchName}
+          </p>
         </div>
 
-        {/* Dashed line */}
-        <div className="mx-3 border-t border-dashed border-foreground/30" />
+        {/* Separator */}
+        <div style={{ margin: "0 8px", borderTop: "1px dashed #999" }} />
 
-        {/* Token Type Badge */}
-        <div className="flex justify-center px-4 pt-2 pb-1">
+        {/* Token type badge */}
+        <div style={{ textAlign: "center", padding: "6px 12px 2px" }}>
           <span
-            className={`rounded px-2 py-0.5 text-[10px] font-bold uppercase tracking-wider ${
-              isFastTrack
-                ? "bg-accent/15 text-accent"
-                : "bg-primary/10 text-primary"
-            }`}
+            style={{
+              display: "inline-block",
+              fontSize: "9px",
+              fontWeight: 700,
+              textTransform: "uppercase",
+              letterSpacing: "0.08em",
+              padding: "2px 8px",
+              border: isFastTrack ? "1px solid #c00" : "1px solid #333",
+              borderRadius: "2px",
+            }}
           >
             {"Type "}{token.tokenTypeNumber}{" - "}{isFastTrack ? "Fast Track / Senior" : "Normal"}
           </span>
         </div>
 
-        {/* Token Number - large and centered */}
-        <div className="flex flex-col items-center px-4 pt-1 pb-1">
-          <p className="text-[9px] font-medium uppercase tracking-widest text-muted-foreground">
+        {/* Token number - BIG */}
+        <div style={{ textAlign: "center", padding: "4px 12px 2px" }}>
+          <p style={{ fontSize: "8px", fontWeight: 500, textTransform: "uppercase", letterSpacing: "0.1em", color: "#666" }}>
             Token No.
           </p>
           <p
-            className={`text-4xl font-black tracking-tight font-mono leading-tight ${
-              isFastTrack ? "text-accent" : "text-primary"
-            }`}
+            style={{
+              fontSize: "36px",
+              fontWeight: 900,
+              lineHeight: 1,
+              letterSpacing: "-0.02em",
+              fontFamily: "monospace",
+              margin: "2px 0",
+            }}
           >
             {token.tokenNumber}
           </p>
         </div>
 
-        {/* License type */}
-        <div className="flex justify-center px-4 pb-2">
-          <span className="rounded bg-secondary px-3 py-0.5 text-[10px] font-bold text-secondary-foreground">
+        {/* License type prefix badge */}
+        <div style={{ textAlign: "center", paddingBottom: "6px" }}>
+          <span
+            style={{
+              display: "inline-block",
+              fontSize: "9px",
+              fontWeight: 700,
+              padding: "2px 10px",
+              backgroundColor: "#eee",
+              borderRadius: "2px",
+            }}
+          >
             {token.servicePrefix}{" - "}{prefixLabel}
           </span>
         </div>
 
-        {/* Dashed line */}
-        <div className="mx-3 border-t border-dashed border-foreground/30" />
+        {/* Separator */}
+        <div style={{ margin: "0 8px", borderTop: "1px dashed #999" }} />
 
-        {/* Details rows - compact */}
-        <div className="flex flex-col gap-0 px-4 py-2">
-          <div className="flex items-center justify-between py-1">
-            <span className="text-[10px] text-muted-foreground">{docLabel}</span>
-            <span className="text-[11px] font-semibold font-mono text-foreground">{token.docNumber}</span>
+        {/* Detail rows */}
+        <div style={{ padding: "6px 12px" }}>
+          <div style={{ display: "flex", justifyContent: "space-between", padding: "3px 0" }}>
+            <span style={{ fontSize: "9px", color: "#666" }}>{docLabel}</span>
+            <span style={{ fontSize: "10px", fontWeight: 600, fontFamily: "monospace" }}>{token.docNumber}</span>
           </div>
-          <div className="flex items-center justify-between py-1">
-            <span className="text-[10px] text-muted-foreground">License Type</span>
-            <span className="text-[11px] font-semibold text-foreground">{token.serviceType}</span>
+          <div style={{ display: "flex", justifyContent: "space-between", padding: "3px 0" }}>
+            <span style={{ fontSize: "9px", color: "#666" }}>License Type</span>
+            <span style={{ fontSize: "10px", fontWeight: 600 }}>{token.serviceType}</span>
           </div>
-          <div className="flex items-center justify-between py-1">
-            <span className="text-[10px] text-muted-foreground">Counter</span>
-            <span className="text-[11px] font-semibold text-foreground">{token.counter}</span>
+          <div style={{ display: "flex", justifyContent: "space-between", padding: "3px 0" }}>
+            <span style={{ fontSize: "9px", color: "#666" }}>Counter</span>
+            <span style={{ fontSize: "10px", fontWeight: 600 }}>{token.counter}</span>
           </div>
-          <div className="flex items-center justify-between py-1">
-            <span className="text-[10px] text-muted-foreground">Time</span>
-            <span className="text-[11px] font-semibold font-mono text-foreground">{token.issuedAt}</span>
+          <div style={{ display: "flex", justifyContent: "space-between", padding: "3px 0" }}>
+            <span style={{ fontSize: "9px", color: "#666" }}>Time</span>
+            <span style={{ fontSize: "10px", fontWeight: 600, fontFamily: "monospace" }}>{token.issuedAt}</span>
           </div>
-          <div className="flex items-center justify-between py-1">
-            <span className="text-[10px] text-muted-foreground">Date</span>
-            <span className="text-[11px] font-semibold text-foreground">{token.date}</span>
+          <div style={{ display: "flex", justifyContent: "space-between", padding: "3px 0" }}>
+            <span style={{ fontSize: "9px", color: "#666" }}>Date</span>
+            <span style={{ fontSize: "10px", fontWeight: 600 }}>{token.date}</span>
           </div>
         </div>
 
-        {/* Dashed line */}
-        <div className="mx-3 border-t border-dashed border-foreground/30" />
+        {/* Separator */}
+        <div style={{ margin: "0 8px", borderTop: "1px dashed #999" }} />
 
-        {/* Footer message */}
-        <div className="flex flex-col items-center gap-0.5 px-4 pt-2 pb-4">
-          <p className="text-[9px] text-muted-foreground text-center">
+        {/* Footer */}
+        <div style={{ textAlign: "center", padding: "6px 12px 10px" }}>
+          <p style={{ fontSize: "8px", color: "#666" }}>
             Please wait for your token number to be called.
           </p>
-          <p className="text-[8px] text-muted-foreground/60 text-center">
+          <p style={{ fontSize: "7px", color: "#999", marginTop: "2px" }}>
             Sindh Police - Proud to Serve
           </p>
         </div>
       </div>
 
-      {/* Action buttons - outside the receipt, hidden on print */}
-      <div className="flex w-[302px] gap-3 print:hidden">
+      {/* Action buttons - NEVER printed */}
+      <div className="flex w-[272px] gap-3 print:hidden">
         <Button
           onClick={onPrint}
           className={`h-10 flex-1 gap-2 rounded-lg text-sm font-semibold ${
