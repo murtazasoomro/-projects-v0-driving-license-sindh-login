@@ -28,33 +28,33 @@ GO
 
 -- ============================================================
 -- Insert a Default Admin User
--- Password: "admin123" (bcrypt hash)
+-- Username: admin  |  Password: admin
 -- In production, change this password immediately!
 -- ============================================================
 IF NOT EXISTS (SELECT 1 FROM Users WHERE Username = 'admin')
 BEGIN
     INSERT INTO Users (Username, PasswordHash, FullName, BranchId, Role) VALUES
-    ('admin', '$2b$10$dummy_hash_replace_me', 'System Administrator', 1, 'admin');
+    ('admin', 'admin', 'System Administrator', 1, 'admin');
 
-    PRINT 'Default admin user created. UPDATE the password hash!';
+    PRINT 'Default admin user created (admin / admin).';
 END
 GO
 
 -- ============================================================
 -- Insert Sample Operator Users (one per branch)
--- Password for all: "operator123" (replace hash in production)
+-- Password for all: "admin" (replace in production)
 -- ============================================================
 IF NOT EXISTS (SELECT 1 FROM Users WHERE Username = 'op.clifton')
 BEGIN
     INSERT INTO Users (Username, PasswordHash, FullName, BranchId, Role) VALUES
-    ('op.clifton',   '$2b$10$dummy_hash_replace_me', 'Operator Clifton',   1, 'operator'),
-    ('op.saddar',    '$2b$10$dummy_hash_replace_me', 'Operator Saddar',    2, 'operator'),
-    ('op.nazimabad', '$2b$10$dummy_hash_replace_me', 'Operator Nazimabad', 3, 'operator'),
-    ('op.hyderabad', '$2b$10$dummy_hash_replace_me', 'Operator Hyderabad', 4, 'operator'),
-    ('op.sukkur',    '$2b$10$dummy_hash_replace_me', 'Operator Sukkur',    5, 'operator'),
-    ('op.larkana',   '$2b$10$dummy_hash_replace_me', 'Operator Larkana',   6, 'operator'),
-    ('op.mirpurkhas','$2b$10$dummy_hash_replace_me', 'Operator Mirpurkhas',7, 'operator'),
-    ('op.nawabshah', '$2b$10$dummy_hash_replace_me', 'Operator Nawabshah', 8, 'operator');
+    ('op.clifton',   'admin', 'Operator Clifton',   1, 'operator'),
+    ('op.saddar',    'admin', 'Operator Saddar',    2, 'operator'),
+    ('op.nazimabad', 'admin', 'Operator Nazimabad', 3, 'operator'),
+    ('op.hyderabad', 'admin', 'Operator Hyderabad', 4, 'operator'),
+    ('op.sukkur',    'admin', 'Operator Sukkur',    5, 'operator'),
+    ('op.larkana',   'admin', 'Operator Larkana',   6, 'operator'),
+    ('op.mirpurkhas','admin', 'Operator Mirpurkhas',7, 'operator'),
+    ('op.nawabshah', 'admin', 'Operator Nawabshah', 8, 'operator');
 
     PRINT 'Sample operators created.';
 END

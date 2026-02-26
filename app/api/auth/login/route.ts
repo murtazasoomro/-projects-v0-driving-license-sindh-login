@@ -37,11 +37,9 @@ export async function POST(request: Request) {
       return NextResponse.json({ error: "Account is disabled" }, { status: 403 })
     }
 
-    // For now, simple password check (plain text comparison for dev).
+    // Plain text password check for development.
     // In production, use bcrypt: await bcrypt.compare(password, user.PasswordHash)
-    // Since seed data uses dummy hashes, we allow "admin123" / "operator123" for dev
-    const isValidPassword =
-      password === "admin123" || password === "operator123" || user.PasswordHash === password
+    const isValidPassword = password === user.PasswordHash
 
     if (!isValidPassword) {
       return NextResponse.json({ error: "Invalid credentials" }, { status: 401 })
