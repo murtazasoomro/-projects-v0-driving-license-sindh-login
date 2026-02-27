@@ -24,6 +24,8 @@ import {
   Copy,
   Lock,
   Unlock,
+  Database,
+  AlertCircle,
 } from "lucide-react"
 
 /* ───────────── lookup helper ───────────── */
@@ -637,6 +639,28 @@ export default function UserManagementPage() {
         onLogout={handleLogout}
         onBack={handleBack}
       />
+
+      {/* Database Info Banner */}
+      <div className="flex items-center gap-4 border-b border-border bg-amber-50 px-4 py-2 dark:bg-amber-950/20">
+        <div className="flex items-center gap-1.5">
+          <Database className="h-3.5 w-3.5 text-amber-600" />
+          <span className="text-[10px] font-bold text-amber-700 dark:text-amber-400">UT Database:</span>
+          <span className="rounded bg-amber-100 px-1.5 py-0.5 text-[10px] font-mono font-semibold text-amber-800 dark:bg-amber-900/40 dark:text-amber-300">
+            ESSUT_Nazimabad
+          </span>
+        </div>
+        <div className="flex items-center gap-1.5">
+          <Database className="h-3.5 w-3.5 text-blue-600" />
+          <span className="text-[10px] font-bold text-blue-700 dark:text-blue-400">Production DB:</span>
+          <span className="rounded bg-blue-100 px-1.5 py-0.5 text-[10px] font-mono font-semibold text-blue-800 dark:bg-blue-900/40 dark:text-blue-300">
+            iXSEPolice_Nazimabad
+          </span>
+        </div>
+        <div className="ml-auto flex items-center gap-1">
+          <AlertCircle className="h-3 w-3 text-amber-600" />
+          <span className="text-[10px] text-amber-600 dark:text-amber-400">Not connected - connect SQL Server to go live</span>
+        </div>
+      </div>
 
       <MasterDetailToolbar
         title="User Management"
