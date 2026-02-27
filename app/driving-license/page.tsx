@@ -18,6 +18,7 @@ const SETUP_TILES: SettingsTile[] = [
   { id: "fee-structure", label: "Fee Structure" },
   { id: "counter-setup", label: "Counter Setup" },
   { id: "card-template", label: "Card Template" },
+  { id: "user-management", label: "User Management" },
 ]
 
 // ===== QUESTIONNAIRE TAB TILES =====
@@ -156,6 +157,8 @@ export default function DrivingLicensePage() {
       router.push("/driving-license/medical-test")
     } else if (tileId === "book-license" || tileId === "book-license-approval") {
       router.push("/driving-license/book-license")
+    } else if (tileId === "user-management") {
+      router.push("/user-management")
     }
   }
 
