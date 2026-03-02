@@ -76,6 +76,7 @@ const TRANSACTION_TILES: SettingsTile[] = [
   { id: "noc-approval", label: "NOC Approval" },
   { id: "noc-approval-2", label: "NOC Approval" },
   { id: "license-verification-approval", label: "License Verification Approval" },
+  { id: "applicant-history", label: "Applicant History" },
 ]
 
 // ===== REPORT TAB TILES =====
@@ -159,6 +160,8 @@ export default function DrivingLicensePage() {
       router.push("/driving-license/book-license")
     } else if (tileId === "user-management") {
       router.push("/user-management")
+    } else if (tileId === "applicant-history") {
+      router.push("/driving-license/applicant-history")
     }
   }
 
