@@ -2,7 +2,6 @@
 @import 'tw-animate-css';
 
 @custom-variant dark (&:is(.dark *));
-
 :root {
   --background: oklch(0.97 0.005 250);
   --foreground: oklch(0.15 0.02 250);
@@ -124,59 +123,4 @@
   }
 }
 
-/* ===== Thermal Printer: 80mm receipt ===== */
-@media print {
-  @page {
-    size: 80mm auto;
-    margin: 0;
-  }
 
-  html, body {
-    width: 80mm !important;
-    margin: 0 !important;
-    padding: 0 !important;
-    background: white !important;
-    color: black !important;
-    -webkit-print-color-adjust: exact;
-    print-color-adjust: exact;
-  }
-
-  /* Hide everything that is NOT the receipt or its ancestor */
-  body * {
-    visibility: hidden !important;
-  }
-
-  /* Show the receipt and everything inside it */
-  #thermal-token,
-  #thermal-token * {
-    visibility: visible !important;
-    color: black !important;
-    box-shadow: none !important;
-  }
-
-  #thermal-token {
-    position: absolute !important;
-    top: 0 !important;
-    left: 0 !important;
-    width: 80mm !important;
-    max-width: 80mm !important;
-    margin: 0 !important;
-    padding: 0 !important;
-    border: none !important;
-    background: white !important;
-    z-index: 999999 !important;
-  }
-
-  #thermal-token img {
-    display: inline-block !important;
-    -webkit-print-color-adjust: exact;
-    print-color-adjust: exact;
-  }
-
-  /* Hide buttons and elements marked for no-print */
-  [data-print-hide],
-  [data-print-hide] * {
-    display: none !important;
-    visibility: hidden !important;
-  }
-}

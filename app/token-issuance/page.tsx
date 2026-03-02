@@ -118,8 +118,65 @@ export default function TokenIssuancePage() {
   )
 
   const handlePrint = useCallback(() => {
-    window.print()
-  }, [])
+    if (!issuedToken) return
+    const t = issuedToken
+    const isFT = t.tokenTypeNumber === 2
+    const docLabel = t.docType === "cnic" ? "CNIC" : "Passport"
+    const prefixLabel = t.servicePrefix === "L" ? "Learner" : t.servicePrefix === "P" ? "Permanent" : "International"
+    const w = window.open("", "_blank", "width=320,height=600")
+    if (!w) return
+    w.document.write(`<!DOCTYPE html><html><head><title>Token ${t.tokenNumber}</title>
+<style>
+  @page { size: 80mm auto; margin: 0; }
+  * { margin:0; padding:0; box-sizing:border-box; }
+  body { width:80mm; font-family:Arial,sans-serif; color:#000; background:#fff; }
+  .receipt { width:100%; padding:0 4mm; }
+  .center { text-align:center; }
+  .sep { border-top:1px dashed #999; margin:4px 0; }
+  .row { display:flex; justify-content:space-between; padding:2px 0; font-size:9px; }
+  .row .lbl { color:#666; }
+  .row .val { font-weight:600; }
+  .mono { font-family:monospace; }
+</style></head><body>
+<div class="receipt">
+  <div class="center" style="padding:8px 0 4px">
+    <img src="/images/sindh-police-logo.png" width="40" height="40" style="object-fit:contain" />
+    <div style="font-size:10px;font-weight:700;letter-spacing:0.05em;text-transform:uppercase;margin-top:3px">Driving License Sindh</div>
+    <div style="font-size:8px;color:#666;margin-top:1px">${t.branchName}</div>
+  </div>
+  <div class="sep"></div>
+  <div class="center" style="padding:4px 0 2px">
+    <span style="display:inline-block;font-size:9px;font-weight:700;text-transform:uppercase;letter-spacing:0.08em;padding:2px 8px;border:1px solid ${isFT ? "#c00" : "#333"};border-radius:2px">
+      Type ${t.tokenTypeNumber} - ${isFT ? "Fast Track / Senior" : "Normal"}
+    </span>
+  </div>
+  <div class="center" style="padding:2px 0">
+    <div style="font-size:8px;font-weight:500;text-transform:uppercase;letter-spacing:0.1em;color:#666">Token No.</div>
+    <div class="mono" style="font-size:36px;font-weight:900;line-height:1;letter-spacing:-0.02em;margin:2px 0">${t.tokenNumber}</div>
+  </div>
+  <div class="center" style="padding-bottom:4px">
+    <span style="display:inline-block;font-size:9px;font-weight:700;padding:2px 10px;background:#eee;border-radius:2px">
+      ${t.servicePrefix} - ${prefixLabel}
+    </span>
+  </div>
+  <div class="sep"></div>
+  <div style="padding:4px 0">
+    <div class="row"><span class="lbl">${docLabel}</span><span class="val mono">${t.docNumber}</span></div>
+    <div class="row"><span class="lbl">License Type</span><span class="val">${t.serviceType}</span></div>
+    <div class="row"><span class="lbl">Counter</span><span class="val">${t.counter}</span></div>
+    <div class="row"><span class="lbl">Time</span><span class="val mono">${t.issuedAt}</span></div>
+    <div class="row"><span class="lbl">Date</span><span class="val">${t.date}</span></div>
+  </div>
+  <div class="sep"></div>
+  <div class="center" style="padding:4px 0 8px">
+    <div style="font-size:8px;color:#666">Please wait for your token number to be called.</div>
+    <div style="font-size:7px;color:#999;margin-top:2px">Sindh Police - Proud to Serve</div>
+  </div>
+</div>
+<script>window.onload=function(){window.print();window.onafterprint=function(){window.close()}}<\/script>
+</body></html>`)
+    w.document.close()
+  }, [issuedToken])
 
   const handleNewToken = useCallback(() => {
     setIssuedToken(null)
