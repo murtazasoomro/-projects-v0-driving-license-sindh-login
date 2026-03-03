@@ -234,7 +234,7 @@ export default function DrivingLicensePage() {
                 onClick={() => setActiveTab(tab.id)}
                 className={`flex shrink-0 flex-col items-center gap-1 rounded-md px-3 py-2.5 text-[11px] font-semibold transition-all sm:flex-1 sm:flex-row sm:gap-2 sm:px-3 sm:py-3 sm:text-sm ${
                   isActive
-                    ? "bg-[#2a8f7a] text-[#f7fafc] shadow-md"
+                    ? "bg-primary text-primary-foreground shadow-md"
                     : "text-muted-foreground hover:bg-secondary hover:text-foreground"
                 }`}
               >
