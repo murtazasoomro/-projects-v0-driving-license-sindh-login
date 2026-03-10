@@ -156,6 +156,17 @@ export function LoginForm() {
           </span>
         )}
       </Button>
+
+      {/* DB Status Link */}
+      <div className="text-center">
+        <a
+          href="/db-status"
+          className="inline-flex items-center gap-1.5 text-xs text-muted-foreground transition-colors hover:text-primary"
+        >
+          <Database className="h-3 w-3" />
+          Check Database Connection
+        </a>
+      </div>
     </form>
   )
 }
