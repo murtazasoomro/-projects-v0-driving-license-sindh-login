@@ -1,6 +1,15 @@
 import { NextRequest, NextResponse } from "next/server"
+import crypto from "crypto"
 import { query } from "@/lib/db/mssql"
-import type { User } from "@/lib/db/types"
+
+interface DbUser {
+  userid: number
+  username: string
+  fullname: string | null
+  emailid: string | null
+  utblock: boolean
+  roleId: number | null
+}
 
 export async function POST(request: NextRequest) {
   try {
@@ -13,55 +22,48 @@ export async function POST(request: NextRequest) {
       )
     }
 
-    // Query user from database
-    const users = await query<User>(
-      `SELECT userid, username, firstname, lastname, email, roleid, entityid, busunitid, siteid, isactive
-       FROM utuser 
-       WHERE username = @username AND password = @password AND ISNULL(utblock, 0) = 0`,
-      { username, password }
+    // Hash password with MD5 (matching the database)
+    const hashedPassword = crypto
+      .createHash("md5")
+      .update(password)
+      .digest("hex")
+
+    // Query user from database - table is 'utusers' with MD5 hashed password
+    const users = await query<DbUser>(
+      `SELECT userid, username, fullname, emailid, utblock, roleId
+       FROM utusers 
+       WHERE username = @username AND password = @hashedPassword AND ISNULL(utblock, 0) = 0`,
+      { username, hashedPassword }
     )
 
     if (users.length === 0) {
       return NextResponse.json(
-        { error: "Invalid username or password" },
+        { error: "Invalid credentials" },
         { status: 401 }
       )
     }
 
     const user = users[0]
 
-    if (!user.isactive) {
+    if (user.utblock) {
       return NextResponse.json(
-        { error: "User account is inactive" },
+        { error: "User account is blocked" },
         { status: 403 }
       )
     }
 
-    // Get business unit name for branch display
-    let branchName = "Sindh Police - DL Branch"
-    if (user.busunitid) {
-      const units = await query<{ busunitstxt: string }>(
-        `SELECT busunitstxt FROM BusinessUnit WHERE busunitid = @busunitid`,
-        { busunitid: user.busunitid }
-      )
-      if (units.length > 0) {
-        branchName = units[0].busunitstxt || branchName
-      }
-    }
-
     return NextResponse.json({
       success: true,
-      user: {
-        userid: user.userid,
-        username: user.username,
-        firstname: user.firstname,
-        lastname: user.lastname,
-        email: user.email,
-        roleid: user.roleid,
-        entityid: user.entityid,
-        busunitid: user.busunitid,
-        siteid: user.siteid,
-        branchName,
+      data: {
+        user: {
+          userid: user.userid,
+          loginid: user.username,
+          fullname: user.fullname || user.username,
+          email: user.emailid,
+          roleid: user.roleId,
+          busunitid: 1, // Default business unit
+          busunitname: "Sindh Police - DL Branch",
+        },
       },
     })
   } catch (error) {
