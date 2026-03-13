@@ -16,7 +16,7 @@ export async function POST(request: NextRequest) {
     // Query user from database
     const users = await query<User>(
       `SELECT userid, username, firstname, lastname, email, roleid, entityid, busunitid, siteid, isactive
-       FROM utuser 
+       FROM utusers 
        WHERE username = @username AND password = @password AND ISNULL(utblock, 0) = 0`,
       { username, password }
     )
