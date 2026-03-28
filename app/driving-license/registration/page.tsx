@@ -256,13 +256,28 @@ function RegistrationPage() {
   }, [])
 
   const capturePhoto = useCallback(() => {
-    if (!videoRef.current || !canvasRef.current) return
+    console.log("[v0] capturePhoto called")
+    console.log("[v0] videoRef.current:", videoRef.current)
+    console.log("[v0] canvasRef.current:", canvasRef.current)
+    
+    if (!videoRef.current || !canvasRef.current) {
+      console.log("[v0] Missing ref - videoRef:", !!videoRef.current, "canvasRef:", !!canvasRef.current)
+      return
+    }
     const video = videoRef.current
     const canvas = canvasRef.current
+    
+    console.log("[v0] video.videoWidth:", video.videoWidth)
+    console.log("[v0] video.videoHeight:", video.videoHeight)
+    console.log("[v0] video.clientWidth:", video.clientWidth)
+    console.log("[v0] video.clientHeight:", video.clientHeight)
+    console.log("[v0] video.readyState:", video.readyState)
     
     // Check if video has valid dimensions (metadata loaded)
     const width = video.videoWidth || video.clientWidth || 640
     const height = video.videoHeight || video.clientHeight || 480
+    
+    console.log("[v0] Using dimensions - width:", width, "height:", height)
     
     if (width === 0 || height === 0) {
       setCameraError("Camera not ready. Please wait and try again.")
@@ -272,11 +287,22 @@ function RegistrationPage() {
     canvas.width = width
     canvas.height = height
     const ctx = canvas.getContext("2d")
-    if (!ctx) return
-    ctx.drawImage(video, 0, 0, width, height)
-    const dataUrl = canvas.toDataURL("image/jpeg", 0.85)
-    setForm(prev => ({ ...prev, photoData: dataUrl }))
-    stopCamera()
+    if (!ctx) {
+      console.log("[v0] Failed to get canvas context")
+      return
+    }
+    
+    try {
+      ctx.drawImage(video, 0, 0, width, height)
+      const dataUrl = canvas.toDataURL("image/jpeg", 0.85)
+      console.log("[v0] Photo captured, dataUrl length:", dataUrl.length)
+      console.log("[v0] dataUrl preview:", dataUrl.substring(0, 100))
+      setForm(prev => ({ ...prev, photoData: dataUrl }))
+      stopCamera()
+    } catch (err) {
+      console.log("[v0] Error during capture:", err)
+      setCameraError("Failed to capture photo. Please try again.")
+    }
   }, [stopCamera])
 
   const clearPhoto = useCallback(() => {
