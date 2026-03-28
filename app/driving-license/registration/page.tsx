@@ -215,6 +215,26 @@ function RegistrationPage() {
       streamRef.current = stream
       if (videoRef.current) {
         videoRef.current.srcObject = stream
+        // Wait for video metadata to load before playing
+        await new Promise<void>((resolve, reject) => {
+          const video = videoRef.current!
+          const onLoadedMetadata = () => {
+            video.removeEventListener("loadedmetadata", onLoadedMetadata)
+            video.removeEventListener("error", onError)
+            resolve()
+          }
+          const onError = () => {
+            video.removeEventListener("loadedmetadata", onLoadedMetadata)
+            video.removeEventListener("error", onError)
+            reject(new Error("Video failed to load"))
+          }
+          video.addEventListener("loadedmetadata", onLoadedMetadata)
+          video.addEventListener("error", onError)
+          // If metadata already loaded
+          if (video.readyState >= 1) {
+            onLoadedMetadata()
+          }
+        })
         await videoRef.current.play()
       }
       setCameraActive(true)
@@ -239,11 +259,21 @@ function RegistrationPage() {
     if (!videoRef.current || !canvasRef.current) return
     const video = videoRef.current
     const canvas = canvasRef.current
-    canvas.width = video.videoWidth
-    canvas.height = video.videoHeight
+    
+    // Check if video has valid dimensions (metadata loaded)
+    const width = video.videoWidth || video.clientWidth || 640
+    const height = video.videoHeight || video.clientHeight || 480
+    
+    if (width === 0 || height === 0) {
+      setCameraError("Camera not ready. Please wait and try again.")
+      return
+    }
+    
+    canvas.width = width
+    canvas.height = height
     const ctx = canvas.getContext("2d")
     if (!ctx) return
-    ctx.drawImage(video, 0, 0)
+    ctx.drawImage(video, 0, 0, width, height)
     const dataUrl = canvas.toDataURL("image/jpeg", 0.85)
     setForm(prev => ({ ...prev, photoData: dataUrl }))
     stopCamera()
