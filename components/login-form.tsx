@@ -54,12 +54,14 @@ export function LoginForm() {
     if (username === "admin" && password === "admin") {
       sessionStorage.setItem("dls_user", "Administrator")
       sessionStorage.setItem("dls_username", "admin")
+      sessionStorage.setItem("dls_userid", "1")
       sessionStorage.setItem("dls_authenticated", "true")
       sessionStorage.setItem("dls_branch_name", "DLS Branch Office - Clifton")
       sessionStorage.setItem("dls_branch_code", "BR-001")
       sessionStorage.setItem("dls_busunitid", "1")
       sessionStorage.setItem("dls_use_database", "false")
-      setTimeout(() => router.push("/session"), 800)
+      router.push("/session")
+      return
     } else {
       setError("Invalid username or password")
       setIsLoading(false)
