@@ -14,7 +14,6 @@ export function LoginForm() {
   const [username, setUsername] = useState("")
   const [password, setPassword] = useState("")
   const [error, setError] = useState("")
-  const [useDatabase, setUseDatabase] = useState(true)
   const router = useRouter()
 
   const handleSubmit = async (e: React.FormEvent) => {
@@ -22,32 +21,29 @@ export function LoginForm() {
     setIsLoading(true)
     setError("")
 
-    // Try database login first if enabled
-    if (useDatabase) {
-      try {
-        const result = await loginUser({ username, password })
-        
-        if (result.success && result.data?.user) {
-          const user = result.data.user
-          sessionStorage.setItem("dls_user", user.fullname || user.loginid)
-          sessionStorage.setItem("dls_username", user.loginid)
-          sessionStorage.setItem("dls_userid", String(user.userid))
-          sessionStorage.setItem("dls_authenticated", "true")
-          sessionStorage.setItem("dls_branch_name", user.busunitname || "DLS Branch Office")
-          sessionStorage.setItem("dls_busunitid", String(user.busunitid))
-          sessionStorage.setItem("dls_use_database", "true")
-          router.push("/session")
-          return
-        } else if (result.error?.includes("credentials")) {
-          setError("Invalid username or password")
-          setIsLoading(false)
-          return
-        }
-        // If database error (not auth error), fall through to demo mode
-      } catch {
-        // Database not available, continue to demo mode
-        console.log("[v0] Database not available, using demo mode")
+    // Try database login first
+    try {
+      const result = await loginUser({ username, password })
+      
+      if (result.success && result.data?.user) {
+        const user = result.data.user
+        sessionStorage.setItem("dls_user", user.fullname || user.loginid)
+        sessionStorage.setItem("dls_username", user.loginid)
+        sessionStorage.setItem("dls_userid", String(user.userid))
+        sessionStorage.setItem("dls_authenticated", "true")
+        sessionStorage.setItem("dls_branch_name", user.busunitname || "DLS Branch Office")
+        sessionStorage.setItem("dls_busunitid", String(user.busunitid))
+        sessionStorage.setItem("dls_use_database", "true")
+        router.push("/session")
+        return
+      } else if (result.error?.includes("credentials")) {
+        setError("Invalid username or password")
+        setIsLoading(false)
+        return
       }
+      // If database error (not auth error), fall through to demo mode
+    } catch {
+      // Database not available, continue to demo mode
     }
 
     // Demo mode fallback (admin / admin)
@@ -117,19 +113,7 @@ export function LoginForm() {
         </div>
       </div>
 
-      <div className="flex items-center justify-between">
-        <label className="flex items-center gap-2 cursor-pointer">
-          <input
-            type="checkbox"
-            checked={useDatabase}
-            onChange={(e) => setUseDatabase(e.target.checked)}
-            className="h-4 w-4 rounded border-border accent-primary"
-          />
-          <span className="flex items-center gap-1.5 text-sm text-muted-foreground">
-            <Database className="h-3.5 w-3.5" />
-            Use SQL Server
-          </span>
-        </label>
+      <div className="flex items-center justify-end">
         <a
           href="#"
           className="text-sm font-medium text-primary transition-colors hover:text-primary/80"
