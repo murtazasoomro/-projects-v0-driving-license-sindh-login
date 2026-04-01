@@ -208,6 +208,13 @@ function RegistrationPage() {
   // ===== Camera functions =====
   const startCamera = useCallback(async () => {
     setCameraError(null)
+    
+    // Check if getUserMedia is supported
+    if (!navigator.mediaDevices || !navigator.mediaDevices.getUserMedia) {
+      setCameraError("Camera not supported in this browser. Please use Chrome, Firefox, or Edge.")
+      return
+    }
+    
     try {
       const stream = await navigator.mediaDevices.getUserMedia({
         video: { facingMode: "user", width: { ideal: 640 }, height: { ideal: 480 } },
@@ -218,12 +225,20 @@ function RegistrationPage() {
         // Wait for video metadata to load before playing
         await new Promise<void>((resolve, reject) => {
           const video = videoRef.current!
+          const timeoutId = setTimeout(() => {
+            video.removeEventListener("loadedmetadata", onLoadedMetadata)
+            video.removeEventListener("error", onError)
+            reject(new Error("Video load timeout"))
+          }, 5000)
+          
           const onLoadedMetadata = () => {
+            clearTimeout(timeoutId)
             video.removeEventListener("loadedmetadata", onLoadedMetadata)
             video.removeEventListener("error", onError)
             resolve()
           }
           const onError = () => {
+            clearTimeout(timeoutId)
             video.removeEventListener("loadedmetadata", onLoadedMetadata)
             video.removeEventListener("error", onError)
             reject(new Error("Video failed to load"))
@@ -238,8 +253,29 @@ function RegistrationPage() {
         await videoRef.current.play()
       }
       setCameraActive(true)
-    } catch {
-      setCameraError("Camera access denied or not available")
+    } catch (err) {
+      // Stop any partial stream
+      if (streamRef.current) {
+        streamRef.current.getTracks().forEach(t => t.stop())
+        streamRef.current = null
+      }
+      
+      // Provide specific error messages
+      if (err instanceof Error) {
+        if (err.name === "NotAllowedError" || err.name === "PermissionDeniedError") {
+          setCameraError("Camera access denied. Please allow camera permission in browser settings.")
+        } else if (err.name === "NotFoundError" || err.name === "DevicesNotFoundError") {
+          setCameraError("No camera found. Please connect a camera and try again.")
+        } else if (err.name === "NotReadableError" || err.name === "TrackStartError") {
+          setCameraError("Camera is in use by another application. Please close other apps using the camera.")
+        } else if (err.message === "Video load timeout") {
+          setCameraError("Camera took too long to start. Please try again.")
+        } else {
+          setCameraError(`Camera error: ${err.message}`)
+        }
+      } else {
+        setCameraError("Camera access denied or not available")
+      }
       setCameraActive(false)
     }
   }, [])
