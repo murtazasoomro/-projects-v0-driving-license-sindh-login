@@ -207,37 +207,49 @@ function RegistrationPage() {
 
   // ===== Camera functions =====
   const startCamera = useCallback(async () => {
+    console.log("[v0] startCamera called")
     setCameraError(null)
     
     // Check if getUserMedia is supported
     if (!navigator.mediaDevices || !navigator.mediaDevices.getUserMedia) {
+      console.log("[v0] Camera API not supported")
       setCameraError("Camera not supported in this browser. Please use Chrome, Firefox, or Edge.")
       return
     }
+    
+    console.log("[v0] Camera API supported, requesting permission...")
     
     try {
       const stream = await navigator.mediaDevices.getUserMedia({
         video: { facingMode: "user", width: { ideal: 640 }, height: { ideal: 480 } },
       })
+      console.log("[v0] Got camera stream:", stream)
       streamRef.current = stream
+      
+      console.log("[v0] videoRef.current:", videoRef.current)
       if (videoRef.current) {
         videoRef.current.srcObject = stream
+        console.log("[v0] Set srcObject, waiting for metadata...")
+        
         // Wait for video metadata to load before playing
         await new Promise<void>((resolve, reject) => {
           const video = videoRef.current!
           const timeoutId = setTimeout(() => {
+            console.log("[v0] Video load timeout reached")
             video.removeEventListener("loadedmetadata", onLoadedMetadata)
             video.removeEventListener("error", onError)
             reject(new Error("Video load timeout"))
           }, 5000)
           
           const onLoadedMetadata = () => {
+            console.log("[v0] Video metadata loaded")
             clearTimeout(timeoutId)
             video.removeEventListener("loadedmetadata", onLoadedMetadata)
             video.removeEventListener("error", onError)
             resolve()
           }
           const onError = () => {
+            console.log("[v0] Video error event fired")
             clearTimeout(timeoutId)
             video.removeEventListener("loadedmetadata", onLoadedMetadata)
             video.removeEventListener("error", onError)
@@ -247,13 +259,20 @@ function RegistrationPage() {
           video.addEventListener("error", onError)
           // If metadata already loaded
           if (video.readyState >= 1) {
+            console.log("[v0] Metadata already loaded, readyState:", video.readyState)
             onLoadedMetadata()
           }
         })
+        console.log("[v0] Calling play()...")
         await videoRef.current.play()
+        console.log("[v0] play() succeeded")
+      } else {
+        console.log("[v0] videoRef.current is null!")
       }
+      console.log("[v0] Setting cameraActive to true")
       setCameraActive(true)
     } catch (err) {
+      console.log("[v0] Camera error:", err)
       // Stop any partial stream
       if (streamRef.current) {
         streamRef.current.getTracks().forEach(t => t.stop())
