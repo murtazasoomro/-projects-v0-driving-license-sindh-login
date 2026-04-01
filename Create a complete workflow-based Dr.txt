@@ -1,0 +1,273 @@
+Create a **complete workflow-based Driving License Management System UI** for Sindh Driving License Software.
+
+The system must strictly follow a **step-by-step controlled process**, where users cannot skip steps.
+This is an **enterprise government application**, so the design must be structured, process-driven, and practical.
+
+---
+
+# 🎯 CORE REQUIREMENT
+
+Implement a **strict workflow system** where each application moves through defined stages.
+
+Each step must be locked until the previous step is completed.
+
+---
+
+# 🔁 MAIN SYSTEM FLOW
+
+## Step 1: Login
+
+* User logs into system
+* After login → user must select:
+
+  * Branch
+  * Start Session
+
+✅ Important:
+
+* No action allowed without active session
+* Bind:
+
+  * userId
+  * branchId
+  * sessionId
+
+---
+
+## Step 2: Dashboard
+
+Show options:
+
+* New Token
+* Continue Existing Application
+* Search Application
+
+---
+
+## Step 3: Token Issuance
+
+* Input CNIC
+* Validate CNIC
+* Generate Token Number (e.g., L-0001)
+
+After token creation, show options:
+
+* → Proceed to Registration
+* → Issue New Token
+
+✅ Automatically carry token to next step
+
+---
+
+## Step 4: Registration
+
+Form should include:
+
+* Applicant Information
+* Address
+* Contact
+* License Type
+
+Add:
+
+* Photo Capture
+* Biometric Capture
+* Signature Capture
+
+✅ Save registration → update status = REGISTERED
+
+---
+
+## Step 5: Fee Challan
+
+* Auto calculate fee based on license category
+* Generate challan
+
+Status → FEE_GENERATED
+
+---
+
+## Step 6: Payment (NBP)
+
+* Mark payment as completed
+
+Status → FEE_PAID
+
+---
+
+## Step 7: Photo / Biometric / Signature Confirmation
+
+* Ensure all captures completed
+
+Status → CAPTURE_DONE
+
+---
+
+## Step 8: Medical Test
+
+* Doctor login required
+* Approve / Reject
+
+Status → MEDICAL_PASS / MEDICAL_FAIL
+
+---
+
+## Step 9: Theory Test
+
+* Computer-based test
+* Auto result
+
+Status → THEORY_PASS / THEORY_FAIL
+
+---
+
+## Step 10: Physical Driving Test
+
+* Inspector marks result
+
+Status → PHYSICAL_PASS / PHYSICAL_FAIL
+
+---
+
+## Step 11: DSP Approval
+
+* Final approval
+
+Status → APPROVED / REJECTED
+
+---
+
+## Step 12: Printing
+
+* Generate license card
+
+Status → PRINTED
+
+---
+
+## Step 13: TCS Booking
+
+* Courier entry
+* Tracking number
+
+Status → DISPATCHED
+
+---
+
+# 🔐 WORKFLOW CONTROL RULES
+
+Implement strict validation:
+
+* Cannot access Registration without Token
+* Cannot generate fee without Registration
+* Cannot proceed to test without Payment
+* Cannot approve without passing tests
+* Cannot print without approval
+
+Each screen must check:
+
+```
+currentStatus
+```
+
+---
+
+# 📊 APPLICATION STATUS MODEL
+
+Use status-based system:
+
+```
+TOKEN_ISSUED
+REGISTERED
+FEE_GENERATED
+FEE_PAID
+CAPTURE_DONE
+MEDICAL_PASS
+THEORY_PASS
+PHYSICAL_PASS
+APPROVED
+PRINTED
+DISPATCHED
+```
+
+---
+
+# 🧭 UI FLOW DESIGN
+
+Create a **step progress bar** at top:
+
+[ Token → Registration → Fee → Payment → Capture → Medical → Theory → Physical → Approval → Print → Dispatch ]
+
+Highlight current step.
+
+---
+
+# 🖥️ SCREEN STRUCTURE
+
+Each step should have its own screen:
+
+1. Token Screen
+2. Registration Screen
+3. Fee Screen
+4. Payment Screen
+5. Capture Screen (Image + Biometric + Signature)
+6. Medical Screen
+7. Theory Screen
+8. Physical Test Screen
+9. Approval Screen
+10. Print Screen
+11. Dispatch Screen
+
+---
+
+# 🔍 SEARCH & CONTINUE FLOW
+
+Allow:
+
+* Search by CNIC / Token
+* Resume application from last step
+
+---
+
+# ⚙️ TECHNICAL REQUIREMENTS
+
+* Build using Next.js + Tailwind CSS
+* Use component-based architecture
+* Maintain global state (Zustand or React context)
+* Mock backend (no real API needed)
+* Store application data in state
+
+---
+
+# 🎨 DESIGN STYLE
+
+* Government system UI
+* Compact, structured layout
+* Section-based forms
+* Minimal animations
+* Functional, not decorative
+
+---
+
+# 🧠 ADVANCED FEATURE (IMPORTANT)
+
+Add:
+
+* Role-based access:
+
+  * Operator → Token, Registration
+  * Medical Officer → Medical
+  * Inspector → Physical Test
+  * DSP → Approval
+
+---
+
+# 📌 FINAL GOAL
+
+The system should behave like a **real production Driving License workflow system**, not just forms.
+
+* Step-by-step progression
+* No skipping steps
+* Clear status tracking
+* Realistic government software behavior
+

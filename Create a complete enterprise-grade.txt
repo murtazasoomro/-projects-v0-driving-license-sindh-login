@@ -1,0 +1,192 @@
+Create a complete enterprise-grade UI/UX design for a Government Driving License Management System (DLMS) for Sindh.
+
+This system must look highly secure, professional, practical, and process-driven. It should feel like a real large-scale government enterprise application, not a simple public website.
+
+CORE THEME:
+- Enterprise government software
+- Secure and controlled workflow
+- Serious, trustworthy, official look
+- Clean dashboard-based layout
+- Strong data protection and payment security feel
+- Professional icons, tables, status badges, approval flows, audit visibility
+
+MAIN REQUIREMENT:
+The software must strictly enforce step-by-step workflow. Users cannot skip steps. Every step is locked until the previous step is completed and verified by the backend.
+
+REQUIRED FLOW:
+1. Login
+2. Branch Selection
+3. Session Start
+4. Token Issuance
+5. Registration
+6. Biometric Capture
+7. Signature Capture
+8. Photo Capture
+9. Payment / Challan
+10. Payment Verification
+11. Medical
+12. Theory Test
+13. Physical Driving Test
+14. Approval
+15. Printing
+16. Dispatch / TCS Tracking
+
+LOGIN AND SESSION SECURITY:
+- User login must look secure and official
+- After login, user must start a session
+- Session must be bound with:
+  - userId
+  - branchId
+  - sessionId
+- No page action allowed without active session
+- Show active session badge in top header
+- Show branch name, logged-in officer name, and session status
+
+ENTERPRISE SECURITY REQUIREMENTS:
+- Design must visually communicate high security
+- Add secure indicators like:
+  - Encrypted
+  - Verified
+  - Approved
+  - Payment Secured
+  - Audit Logged
+- Show role-based access feel
+- Show audit trail panel
+- Show protected data sections
+- Show warning banners for unauthorized access
+- Show locked workflow steps until completion
+- Show backend verified badges, not only frontend UI indicators
+
+PAYMENT MODULE REQUIREMENTS:
+The payment module is critical and must look highly secure.
+
+Include:
+- Challan generation screen
+- Unique challan number
+- Payment amount details
+- Payment status badges:
+  - Pending
+  - Paid
+  - Verified
+  - Failed
+- Payment verification panel
+- Transaction reference number
+- Bank verification response section
+- Receipt print button
+- Duplicate payment prevention message
+- Fraud prevention / mismatch alert section
+- Audit log for payment actions
+
+The payment module must feel bank-integrated, enterprise-secure, and impossible to manipulate manually.
+
+REGISTRATION FORM REQUIREMENTS:
+Design a structured enterprise registration form with:
+- Applicant information
+- CNIC
+- Name
+- Father / Husband Name
+- Gender
+- Date of Birth
+- License category
+- Address
+- Branch
+- Application type
+
+On the same form layout include:
+- Applicant photo area
+- Biometric capture area
+- Signature capture area
+
+The registration page must look exactly like a practical government operations form used by officers at counters.
+
+DASHBOARD REQUIREMENTS:
+After login/session start, dashboard should show:
+- New Token
+- Continue Existing Application
+- Search Application
+- Pending Payments
+- Pending Approvals
+- Printing Queue
+- Dispatch Queue
+- Audit Logs
+- Session Management
+
+Add enterprise cards, professional tables, workflow metrics, recent activity, and secure operational overview.
+
+WORKFLOW UI REQUIREMENTS:
+Every application should show a workflow tracker with steps:
+Token → Registration → Biometrics → Payment → Verification → Medical → Theory → Physical → Approval → Printing → Dispatch
+
+Each step must have state:
+- Locked
+- Pending
+- In Progress
+- Completed
+- Verified
+- Rejected
+
+Use professional government enterprise styling with timeline, step cards, and process arrows.
+
+DESIGN STYLE:
+- Modern enterprise admin panel
+- Government official branding style
+- Dark blue, white, gray, subtle green for verified states
+- Strong typography
+- Clean spacing
+- Professional tables
+- Large forms
+- Secure status badges
+- Minimal but high-value icons
+- Sidebar navigation
+- Header with session and branch indicators
+- Serious and real operational environment
+
+SIDEBAR MENU:
+- Dashboard
+- Token Issuance
+- Registration
+- Biometric & Signature
+- Payment Module
+- Medical
+- Theory Test
+- Physical Test
+- Approval
+- Printing
+- Dispatch
+- Search Records
+- Reports
+- Audit Logs
+- User Session Control
+- Branch Management
+
+SPECIAL ENTERPRISE FEATURES:
+- Audit trail drawer
+- Activity history panel
+- Role-based permission labels
+- Secure transaction logs
+- Session timeout warning modal
+- Unauthorized action blocked modal
+- Record lock status
+- Verification checkpoint indicators
+- Payment reconciliation section
+- Application history timeline
+
+IMPORTANT VISUAL INSTRUCTION:
+Make the interface look like a real secure internal government enterprise software used by officers, DSP approvals, branch operators, and administrators.
+Do not make it look like an e-commerce website or startup app.
+It must feel operational, official, secure, and process-controlled.
+
+OUTPUT EXPECTATION:
+Generate high-fidelity UI screens for:
+- Login
+- Session Start
+- Dashboard
+- Token Issuance
+- Registration with photo + biometric + signature
+- Payment module
+- Approval screen
+- Printing screen
+- Dispatch tracking screen
+- Audit log screen
+
+Use realistic dummy government data, structured tables, workflow indicators, and enterprise security labels throughout the design.
